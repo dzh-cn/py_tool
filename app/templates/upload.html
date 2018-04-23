@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>原形上传</title>
+</head>
+<style>
+    body {
+        background: #1b0303;
+    }
+    .contain {
+        margin-top: 12em;
+        margin-left: auto;
+        margin-right: auto;
+        width: 13em;
+        background: gray;
+        padding: 5em;
+    }
+
+    .contain-1 {
+        background: #a99191;
+        margin-left: auto;
+        margin-right: auto;
+        width: 37em;
+        height: 30em;
+    }
+    .contain-0 {
+        background: #5e7d79;
+        margin-left: auto;
+        margin-right: auto;
+        height: 37em;
+    }
+</style>
+<body>
+<div class="contain-0">
+    <div class="contain-1">
+        <div class="contain">
+            {% if message %}
+            <p style="color:red"><a href="{{ message }}" target="_blank">{{ message }}</a></p>
+            {% endif %}
+            <form action="/upload" method="post" enctype="multipart/form-data">
+                <legend>选择原形zip包:</legend>
+                <p>
+                    <select name="cover" style="width:173px">
+                        <option value="0">新建</option>
+                        <option value="1">覆盖</option>
+                    </select>
+                </p>
+                <p><input name="user" placeholder="用户" value="{{ user or '' }}"></p>
+                <p><input name="directory" placeholder="目录" value="{{ directory }}"></p>
+                <p><input type="file" name="file"></p>
+                <p>
+                    <button type="submit">上传原形</button>
+                </p>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>
