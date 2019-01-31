@@ -29,7 +29,7 @@ def upload():
 			message = '以下都不能为空！'
 		else:
 			cover = request.form['cover']
-			result = extractall_to_relatively_path(request.files['file'], directory, cover=cover)
+			result = extractall_to_relatively_path(request.files['file'], user + '/' + directory, cover=cover)
 			message = uri + user + '/' + directory
 			if result != 1:
 				message = result
@@ -52,8 +52,18 @@ def extractall_to_absolute_path(file, path, *, cover=0):
 	with ZipFile(file, 'r') as zip_file:
 		zip_file.extractall(path)
 
+	rename_cn(path)
+
 	print('All files zipped successfully!')
 	return 1
+
+
+def rename_cn(path):
+	for d in os.listdir(path):
+		file_path = path + '/' + d
+		if os.path.isdir(file_path):
+			rename_cn(file_path)
+		os.rename(file_path, path + '/' + d.encode('cp437').decode('unioncode'))
 
 
 def extractall_to_relatively_path(file, path, **param):
