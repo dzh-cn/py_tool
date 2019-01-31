@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>log detail</title>
+</head>
+<style>
+    body {
+        background: #505050;
+        color: #FFFFFF;
+    }
+    .line:before {
+        content: "*";
+        color: mediumvioletred;
+        margin-right: 5px;
+    }
+</style>
+<script src="https://cdn.staticfile.org/vue/2.2.2/vue.min.js"></script>
+<script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+<body>
+<div class="container">
+    <div id="logBox">
+        <div class="line" v-for="line in logs" v-text="line">
+        </div>
+    </div>
+    <p>
+        system: <span v-html="system"></span>
+        ,offset: <span v-html="offset"></span>
+        <label style="float: right;"><input v-on:change="getLog" value=1 v-model="auto" type="radio">自动</label>
+        <label style="float: right;"><input value=0 v-model="auto" type="radio">手动</label>
+        <button class="get-log-btn" style="float: right;" v-on:click="getLog">getLog</button>
+    </p>
+</div>
+<script>
+    var vue = new Vue({
+        el: '.container',
+        data: {
+        	system: '{{ system }}',
+            offset: '{{ offset }}',
+            logs: ['>>>>>>>>>>>>>>'],
+            auto: 1
+        },
+        methods: {
+        	getLog: function (offset) {
+        		if(vue) {
+        			offset = vue.offset
+                }
+                $.ajax({
+                    url: '/{{ system }}/watch.json',
+                    dataType: 'json',
+                    data: {offset: offset}
+                }).then(function (value) {
+                    vue.offset = value.offset;
+                    if(value.line && value.line.length > 0) {
+						$.each(value.line, function (i, v) {
+							setTimeout(function (args) {
+							    vue.logs.push(v);
+                            }, 20);
+						})
+					}
+					$("html,body").animate({scrollTop: $(".get-log-btn").offset().top}, 50)
+					if(vue.auto == 1)
+                        setTimeout(vue.$options.methods.getLog, 200);
+                })
+			}
+        }
+    })
+</script>
+</body>
+</html>
