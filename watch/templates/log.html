@@ -9,27 +9,37 @@
         background: #505050;
         color: #FFFFFF;
     }
+    .log-box {
+        margin-bottom: 30px;
+    }
     .line:before {
         content: "*";
         color: mediumvioletred;
         margin-right: 5px;
+    }
+    .btn-box {
+        position: fixed;
+        bottom: 24px;
+        right: 20px;
     }
 </style>
 <script src="https://cdn.staticfile.org/vue/2.2.2/vue.min.js"></script>
 <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
 <body>
 <div class="container">
-    <div id="logBox">
+    <div id=".log-box">
         <div class="line" v-for="line in logs" v-text="line">
         </div>
     </div>
-    <p>
+    <p class="sys-info">
         system: <span v-html="system"></span>
         ,offset: <span v-html="offset"></span>
-        <label style="float: right;"><input v-on:change="getLog" value=1 v-model="auto" type="radio">自动</label>
-        <label style="float: right;"><input value=0 v-model="auto" type="radio">手动</label>
-        <button class="get-log-btn" style="float: right;" v-on:click="getLog">getLog</button>
     </p>
+    <div class="btn-box">
+        <label><input value=0 v-model="auto" type="radio">手动</label>
+        <label><input v-on:change="getLog" value=1 v-model="auto" type="radio">自动</label>
+        <!--<button class="get-log-btn" style="float: right;" v-on:click="getLog">getLog</button>-->
+    </div>
 </div>
 <script>
     var vue = new Vue({
@@ -38,7 +48,7 @@
         	system: '{{ system }}',
             offset: '{{ offset }}',
             logs: ['>>>>>>>>>>>>>>'],
-            auto: 1
+            auto: 0
         },
         methods: {
         	getLog: function (offset) {
@@ -46,7 +56,7 @@
         			offset = vue.offset
                 }
                 $.ajax({
-                    url: '/{{ system }}/watch.json',
+                    url: '/log/{{ system }}.json',
                     dataType: 'json',
                     data: {offset: offset}
                 }).then(function (value) {
@@ -58,7 +68,8 @@
                             }, 20);
 						})
 					}
-					$("html,body").animate({scrollTop: $(".get-log-btn").offset().top}, 50)
+					$("html,body").animate({scrollTop: $(".sys-info").offset().top}, 50)
+                    console.log(vue.auto)
 					if(vue.auto == 1)
                         setTimeout(vue.$options.methods.getLog, 200);
                 })
